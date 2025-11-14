@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>Famous Quotes - Admin Section</title>
+</head>
+<body>
+    <h1> Update and delete quotes</h1>
+    <% for (let i of quotes) { %>
+
+        <a href="/updateQuote?id=<%=i.quoteId%>" >Update</a>
+        <a href="/deleteQuote?id=<%=i.quoteId%>">Delete</a>
+        <%=i.quote%> <br>
+    <% } %>    
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

@@ -23,11 +23,79 @@ const pool = mysql.createPool({
 app.get('/', (req, res) => {
    res.render('home.ejs')
 });
+app.get('/authors', async(req, res) => {
+    let sql = `SELECT authorId, firstName, lastName
+               FROM authors
+               ORDER BY lastName ASC`
+    const [authors] = await pool.query(sql);
+   res.render('authors.ejs', {authors})
+});
+app.get('/quotes', async(req, res) => {
+    let sql = `SELECT quoteId, quote
+               FROM quotes`
+    const [quotes] = await pool.query(sql);
+   res.render('quotes.ejs', {quotes})
+});
+app.get('/updateQuote', async(req, res) => {
+    let authorId = req.query.id;
+    let sql = `SELECT *,
+               WHERE authorId = ?`       
+    const [quoteInfo] = await pool.query(sql, [quoteId]);
+   res.render('updateQuotes.ejs', {quoteInfo})
+});
+app.post('/updateQuote', async(req,res) => {
+    let fn = req.body.first;
+    let ln = req.body.last;
+    let birthPlace = req.body.bp;
+    let gender = req.body.sex;
+    let proffe = req.body.prof;
+    let img = req.body.url;
+    let info = req.body.bio;
+    let authorId = req.body.id;
+    let sql = `UPDATE authors
+               SET firstName = ?,
+                   lastName = ?,
+                   dob = ?,
+                   dod = ?, 
+                   sex = ?
+               WHERE authorId = ?`
+    let sqlParams = [fn, ln, dofb, dofd, authorId];
+    const [authorInfo] = await pool.query(sql, sqlParams);
+    res.redirect('/authors');
+})
+app.get('/updateAuthor', async(req, res) => {
+    let authorId = req.query.id;
+    let sql = `SELECT *,
+               DATE_FORMAT(dob, '%Y-%m-%d') ISOdob,
+               DATE_FORMAT(dod, '%Y-%m-%d') ISOdod
+               FROM authors
+               WHERE authorId = ?`       
+    const [authorInfo] = await pool.query(sql, [authorId]);
+   res.render('updateAuthor.ejs', {authorInfo})
+});
+app.post('/updateAuthor', async(req,res) => {
+    let fn = req.body.first;
+    let ln = req.body.last;
+    let birthPlace = req.body.bp;
+    let gender = req.body.sex;
+    let proffe = req.body.prof;
+    let img = req.body.url;
+    let info = req.body.bio;
+    let authorId = req.body.id;
+    let sql = `UPDATE authors
+               SET firstName = ?,
+                   lastName = ?,
+                   dob = ?,
+                   dod = ?, 
+                   sex = ?
+               WHERE authorId = ?`
+    let sqlParams = [fn, ln, dofb, dofd, authorId];
+    const [authorInfo] = await pool.query(sql, sqlParams);
+    res.redirect('/authors');
+})
 app.post('/addAuthor', async (req, res) => {
     let fn = req.body.first;
     let ln = req.body.last;
-    let dofb = req.body.dob;
-    let dofd = req.body.dod;
     let birthPlace = req.body.bp;
     let gender = req.body.sex;
     let proffe = req.body.prof;
