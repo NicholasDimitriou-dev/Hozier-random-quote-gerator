@@ -37,42 +37,19 @@ app.get('/quotes', async(req, res) => {
    res.render('quotes.ejs', {quotes})
 });
 app.get('/updateQuote', async(req, res) => {
-    let authorId = req.query.id;
-    let sql = `SELECT *,
-               WHERE authorId = ?`       
+    let quoteId = req.query.quoteId;
+    let sql = `SELECT *
+               FROM quotes
+               WHERE quoteId = ?`;
     const [quoteInfo] = await pool.query(sql, [quoteId]);
-   res.render('updateQuotes.ejs', {quoteInfo})
+    
+    let sqlAuthors = `SELECT authorId, firstName, lastName
+                      FROM authors`;
+    const [authors] = await pool.query(sqlAuthors);   
+                  
+    res.render('updateQuote.ejs', {quoteInfo, authors})
 });
-app.post('/updateQuote', async(req,res) => {
-    let fn = req.body.first;
-    let ln = req.body.last;
-    let birthPlace = req.body.bp;
-    let gender = req.body.sex;
-    let proffe = req.body.prof;
-    let img = req.body.url;
-    let info = req.body.bio;
-    let authorId = req.body.id;
-    let sql = `UPDATE authors
-               SET firstName = ?,
-                   lastName = ?,
-                   dob = ?,
-                   dod = ?, 
-                   sex = ?
-               WHERE authorId = ?`
-    let sqlParams = [fn, ln, dofb, dofd, authorId];
-    const [authorInfo] = await pool.query(sql, sqlParams);
-    res.redirect('/authors');
-})
-app.get('/updateAuthor', async(req, res) => {
-    let authorId = req.query.id;
-    let sql = `SELECT *,
-               DATE_FORMAT(dob, '%Y-%m-%d') ISOdob,
-               DATE_FORMAT(dod, '%Y-%m-%d') ISOdod
-               FROM authors
-               WHERE authorId = ?`       
-    const [authorInfo] = await pool.query(sql, [authorId]);
-   res.render('updateAuthor.ejs', {authorInfo})
-});
+
 app.post('/updateAuthor', async(req,res) => {
     let fn = req.body.first;
     let ln = req.body.last;
